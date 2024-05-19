@@ -2,25 +2,60 @@
   <div class="chat-list-container">
     <div
       class="chat-cell shadow-lg"
-      v-for="i in 3"
+      v-for="(item, i) in chatRecord"
       :key="i"
       :style="{ '--t': i }"
+      @click="
+        () => {
+          router.push('/msg');
+        }
+      "
     >
-      <span
-        class="icon-[ri--aliens-fill]"
-        style="color: inherit; font-size: 3rem"
-      ></span>
+      <span :class="item.icon" style="color: inherit; font-size: 3rem"></span>
       <div class="text">
-        <h3>Acwing web 应用课3群xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</h3>
-        <small>yxc: xxx[图片]yyyyyyyyyyyyyyyyyxxxxxxxxxxxxxxxxxxxxxxxx</small>
+        <h3>{{ item.title }}</h3>
+        <small>{{ item.new_info }}</small>
       </div>
       <div class="info">
-        <small style="display: block">18:42</small>
-        <div class="badge">99+</div>
+        <small style="display: block">{{ item.time }}</small>
+        <div class="badge" :class="{ system: item.system }">
+          {{ item.record_num }}
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+
+const router = useRouter();
+const chatRecord = ref([
+  {
+    icon: "icon-[ri--bilibili-line]",
+    title: "GIS Robot",
+    new_info: "你有一条新的系统消息",
+    time: "18:42",
+    record_num: "1",
+    system: true,
+  },
+  {
+    icon: "icon-[ri--contacts-fill]",
+    title: "同事1号",
+    new_info: "请巡查之前新设置的路线",
+    time: "07:42",
+    record_num: "5",
+  },
+  {
+    icon: "icon-[ri--copilot-fill]",
+    title: "同事2",
+    new_info: "请巡查之前设置的固定点位",
+    time: "12:00",
+    record_num: "99+",
+  },
+]);
+</script>
 
 <style scoped>
 .chat-list-container {
@@ -95,11 +130,18 @@
   background-color: gray;
   height: 20px;
   width: auto;
-  padding: 5px 10px;
+  min-width: 20px;
+  padding: 5px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 20px;
   color: #fff;
   font-size: 0.7rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge.system {
+  background-color: rgb(242, 54, 54);
 }
 </style>
