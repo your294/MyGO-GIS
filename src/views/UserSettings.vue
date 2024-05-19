@@ -10,6 +10,13 @@
       >
     </div>
     <div v-else>
+      <div class="person-intro">
+        <span
+          class="icon-[ri--account-box-line]"
+          style="color: inherit; font-size: 3rem"
+        ></span>
+      </div>
+
       <van-cell-group>
         <van-cell
           class="mt-1 text-sm"
@@ -19,9 +26,15 @@
           :value="store.loginUser[attr]"
         />
       </van-cell-group>
-      <van-button class="w-full" type="danger" @click="handleLogout"
-        >logout</van-button
-      >
+      <div class="w-full flex justify-center">
+        <van-button
+          class="mt-2"
+          style="width: 95%"
+          type="danger"
+          @click="handleLogout"
+          >logout</van-button
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +51,7 @@ const store = useUserStore();
 const login = ref(false);
 
 onMounted(() => {
-  store.updateUser();
+  // store.updateUser();
   if (store.loginUser.userRole === "NOT_LOGIN") {
     login.value = false;
   } else {
@@ -58,3 +71,14 @@ const turnToRegister = () => {
   router.push({ name: "注册" });
 };
 </script>
+
+<style scoped>
+.person-intro {
+  height: auto;
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

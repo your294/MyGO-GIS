@@ -22,6 +22,94 @@ const myPosition = ref({
   lat: 0,
 });
 
+var GPS = {
+  PI: 3.141592653589793,
+  x_pi: (3.141592653589793 * 3000.0) / 180.0,
+  delta: function (lat, lon) {
+    var a = 6378245.0; //  a: 卫星椭球坐标投影到平面地图坐标系的投影因子。
+    var ee = 0.006693421622965943; //  ee: 椭球的偏心率。
+    var dLat = this.transformLat(lon - 105.0, lat - 35.0);
+    var dLon = this.transformLon(lon - 105.0, lat - 35.0);
+    var radLat = (lat / 180.0) * this.PI;
+    var magic = Math.sin(radLat);
+    magic = 1 - ee * magic * magic;
+    var sqrtMagic = Math.sqrt(magic);
+    dLat = (dLat * 180.0) / (((a * (1 - ee)) / (magic * sqrtMagic)) * this.PI);
+    dLon = (dLon * 180.0) / ((a / sqrtMagic) * Math.cos(radLat) * this.PI);
+    return {
+      lat: dLat,
+      lon: dLon,
+    };
+  },
+  //WGS-84 to GCJ-02
+  gcj_encrypt: function (wgsLat, wgsLon) {
+    if (this.outOfChina(wgsLat, wgsLon))
+      return {
+        lat: wgsLat,
+        lon: wgsLon,
+      };
+
+    var d = this.delta(wgsLat, wgsLon);
+    return {
+      lat: wgsLat + d.lat,
+      lon: wgsLon + d.lon,
+    };
+  },
+  outOfChina: function (lat, lon) {
+    if (lon < 72.004 || lon > 137.8347) return true;
+    if (lat < 0.8293 || lat > 55.8271) return true;
+    return false;
+  },
+  transformLat: function (x, y) {
+    var ret =
+      -100.0 +
+      2.0 * x +
+      3.0 * y +
+      0.2 * y * y +
+      0.1 * x * y +
+      0.2 * Math.sqrt(Math.abs(x));
+    ret +=
+      ((20.0 * Math.sin(6.0 * x * this.PI) +
+        20.0 * Math.sin(2.0 * x * this.PI)) *
+        2.0) /
+      3.0;
+    ret +=
+      ((20.0 * Math.sin(y * this.PI) + 40.0 * Math.sin((y / 3.0) * this.PI)) *
+        2.0) /
+      3.0;
+    ret +=
+      ((160.0 * Math.sin((y / 12.0) * this.PI) +
+        320 * Math.sin((y * this.PI) / 30.0)) *
+        2.0) /
+      3.0;
+    return ret;
+  },
+  transformLon: function (x, y) {
+    var ret =
+      300.0 +
+      x +
+      2.0 * y +
+      0.1 * x * x +
+      0.1 * x * y +
+      0.1 * Math.sqrt(Math.abs(x));
+    ret +=
+      ((20.0 * Math.sin(6.0 * x * this.PI) +
+        20.0 * Math.sin(2.0 * x * this.PI)) *
+        2.0) /
+      3.0;
+    ret +=
+      ((20.0 * Math.sin(x * this.PI) + 40.0 * Math.sin((x / 3.0) * this.PI)) *
+        2.0) /
+      3.0;
+    ret +=
+      ((150.0 * Math.sin((x / 12.0) * this.PI) +
+        300.0 * Math.sin((x / 30.0) * this.PI)) *
+        2.0) /
+      3.0;
+    return ret;
+  },
+};
+
 onMounted(() => {
   window._AMapSecurityConfig = {
     securityJsCode: "d78bf5d9cd763ead5f428fabec1e0ca6",
@@ -37,7 +125,7 @@ onMounted(() => {
       strokeColor: "white", //轮廓线颜色
       strokeWeight: 2, //轮廓线宽度
       strokeOpacity: 0.5, //轮廓线透明度
-      fillColor: "red", //多边形填充颜色
+      fillColor: "green", //多边形填充颜色
       fillOpacity: 0.5, //多边形填充透明度
       zIndex: 10, //多边形覆盖物的叠加顺序
       cursor: "pointer", //鼠标悬停时的鼠标样式
@@ -99,6 +187,8 @@ onMounted(() => {
           enableHighAccuracy: true, // 是否使用高精度定位，默认：true
           timeout: 10000, // 设置定位超时时间，默认：无穷大
           offset: [10, 20], // 定位按钮的停靠位置的偏移量
+          needAddress: true, // 是否需要将定位结果进行逆地理编码操作
+          noIpLocate: 3,
           zoomToAccuracy: true, //  定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
           position: "RB", //  定位按钮的排放位置,  RB表示右下
         });
@@ -117,8 +207,12 @@ onMounted(() => {
 
         function onComplete(data) {
           // data是具体的定位信息
-          console.log("定位：", data);
-          map.setCenter(data.position, true);
+          console.log("定位：", data.formattedAddress);
+          let gps = GPS.gcj_encrypt(
+            data.position.getLat(),
+            data.position.getLng()
+          );
+          map.setCenter(new AMap.LngLat(gps.lon, gps.lat), true);
           myPosition.value = data.position;
           if (initialMap === false) {
             drawPolyLine();

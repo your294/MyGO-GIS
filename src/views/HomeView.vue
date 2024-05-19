@@ -1,12 +1,12 @@
 <template>
   <div id="GuardPage">
     <div
-      class="overflow-auto"
+      class="overflow-auto wrap-container"
       :key="idx"
       v-for="(worker, idx) in guardWorkerArr"
     >
       <van-card
-        class="mb-2 first: mt-1 dark:bg-slate-600 rounded-md"
+        class="mb-2 first: mt-1 dark:bg-slate-600 rounded-md shadow-lg card"
         thumb="https://fastly.jsdelivr.net/npm/@vant/assets/ipad.jpeg"
       >
         <template #title>
@@ -78,6 +78,15 @@ const onClick = () => (showDialog.value = !showDialog.value);
 </script>
 
 <style scoped>
+.wrap-container {
+  padding: 10px;
+}
+
+.wrap-container .card:hover {
+  transition: transform 0.3s ease;
+  transform: scale(0.95);
+}
+
 p {
   @apply text-xl m-2 p-1;
 }
