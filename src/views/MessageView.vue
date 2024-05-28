@@ -5,7 +5,11 @@
         <div class="msg-time">
           {{ obj.time }}
         </div>
-        <ChatCell :is_me="obj.is_me" :msg="obj.msg_content" />
+        <ChatCell
+          :src="`icon-[ri--bilibili-fill]`"
+          :is_me="obj.is_me"
+          :msg="obj.msg_content"
+        />
       </div>
     </div>
     <div class="send-box">
@@ -35,21 +39,21 @@ import { ref } from "vue";
 import moment from "moment";
 
 const editor_msg = ref("");
+const cur = moment(new Date()).format("YYYY年MM月DD日 HH:mm:ss");
 
 const messages = ref([
   {
-    time: "2022年7月18日 18:42",
-    msg_content: "你好",
+    time: cur,
+    msg_content: "你好, 这里是保安拍照打卡机器人。",
     is_me: false,
   },
   {
-    time: "2022年7月18日 18:44",
-    msg_content:
-      "B站跨年晚会《2023最美的夜》定档12月31日20:00直播，嘉宾阵容同步揭晓快去围观！",
+    time: moment(new Date()).format("YYYY年MM月DD日 HH:mm:ss"),
+    msg_content: "请通过地图标签查看今天的巡逻路线和巡逻必经地点",
     is_me: false,
   },
   {
-    time: "2022年7月18日 18:44",
+    time: moment(new Date()).format("YYYY年MM月DD日 HH:mm:ss"),
     msg_content: "你好",
     is_me: true,
   },

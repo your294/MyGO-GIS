@@ -1,6 +1,7 @@
 <template>
   <div id="chat-cell" :class="{ is_me: is_me }">
-    <Avatar :src="teamAvatar"></Avatar>
+    <Avatar v-if="is_me" :src="teamAvatar"></Avatar>
+    <span id="avatar" v-else :class="src"></span>
     <div class="message">
       <div class="message-content" :class="{ is_me: is_me }">
         {{ props.msg }}
@@ -16,6 +17,7 @@ import teamAvatar from "../assets/teamAvatar.png";
 const props = defineProps({
   is_me: Boolean,
   msg: String,
+  src: String,
 });
 </script>
 
@@ -33,6 +35,10 @@ const props = defineProps({
 
 #chat-cell.is_me {
   float: right;
+}
+
+span#avatar {
+  font-size: 2rem;
 }
 
 #chat-cell > #avatar {

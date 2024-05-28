@@ -37,7 +37,7 @@ const store = useUserStore();
 const username = ref("");
 const password = ref("");
 
-const loginUrl = "/api/m1/4253461-0-default/user/login?apifoxApiId=165961442";
+const loginUrl = "/server/koa/user/login";
 
 const onSubmit = () => {
   axios

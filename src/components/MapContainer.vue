@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
 import AMapLoader from "@amap/amap-jsapi-loader";
+import { useRouter } from "vue-router";
 
 let map = null;
 let myMarker = null;
@@ -203,7 +204,7 @@ onMounted(() => {
           });
         }
 
-        intervalId = setInterval(getCurrentPos, 5000);
+        intervalId = setInterval(getCurrentPos, 10000);
 
         function onComplete(data) {
           // data是具体的定位信息
@@ -241,6 +242,8 @@ onUnmounted(() => {
   map?.destroy();
   clearInterval(intervalId);
 });
+
+const router = useRouter();
 
 const checkPoints = ref([
   {
@@ -285,6 +288,15 @@ const onClickPlus = () => {
   if (check !== -1) {
     checkPoints.value[idx].check = true;
   }
+
+  showToast({
+    message: "GIS 打卡正在处理",
+    icon: "https://fastly.jsdelivr.net/npm/@vant/assets/logo.png",
+  });
+
+  setTimeout(() => {
+    router.push("/camera");
+  }, 2000);
 };
 
 const onClickShow = () => {

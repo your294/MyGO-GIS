@@ -1,5 +1,11 @@
 <template>
   <div id="GuardPage">
+    <van-swipe :autoplay="3000" lazy-render :height="200">
+      <van-swipe-item v-for="image in images" :key="image">
+        <img :src="image" />
+      </van-swipe-item>
+    </van-swipe>
+
     <div
       class="overflow-auto wrap-container"
       :key="idx"
@@ -7,7 +13,10 @@
     >
       <van-card
         class="mb-2 first: mt-1 dark:bg-slate-600 rounded-md shadow-lg card"
-        thumb="https://fastly.jsdelivr.net/npm/@vant/assets/ipad.jpeg"
+        :thumb="
+          worker.userAvatar ??
+          `https://fastly.jsdelivr.net/npm/@vant/assets/ipad.jpeg`
+        "
       >
         <template #title>
           <h3 class="mt-2 text-xl text-sky-500 dark:text-sky-400">
@@ -50,6 +59,14 @@ import { onMounted, ref } from "vue";
 import type { Ref } from "vue";
 import axios from "axios";
 
+const images = ref([
+  "http://127.0.0.1:3000/广告.jpg",
+  "https://images.unsplash.com/photo-1522735338363-cc7313be0ae0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2689&q=80",
+  "https://images.unsplash.com/photo-1559087867-ce4c91325525?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80",
+  "https://images.unsplash.com/photo-1495467033336-2effd8753d51?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2100&q=80",
+  "https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1934&q=80",
+]);
+
 interface GuardInfo {
   userName?: string;
   intro?: string;
@@ -63,7 +80,7 @@ const guardWorkerArr: Ref<Array<GuardInfo>> = ref([]);
 
 onMounted(() => {
   axios
-    .get("/api/m1/4253461-0-default/user/all")
+    .get("/server/koa/user/getAllUsers")
     .then((response: any) => {
       guardWorkerArr.value = response.data;
     })
@@ -78,6 +95,12 @@ const onClick = () => (showDialog.value = !showDialog.value);
 </script>
 
 <style scoped>
+#GuardPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .wrap-container {
   padding: 10px;
 }

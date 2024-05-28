@@ -9,27 +9,37 @@
         >注册</van-button
       >
     </div>
-    <div v-else>
-      <div class="person-intro">
-        <span
-          class="icon-[ri--account-box-line]"
-          style="color: inherit; font-size: 3rem"
-        ></span>
+    <div class="person-card" v-else>
+      <div class="card">
+        <div class="circle">
+          <div class="imgBx">
+            <img :src="store.loginUser.userAvatar" alt="" />
+          </div>
+        </div>
+        <div class="content">
+          <a href="#"><span class="icon-[ri--linkedin-box-fill]"></span> </a>
+          <h3>
+            {{
+              store.loginUser.userName === "admin"
+                ? "孙笑川"
+                : store.loginUser.userName
+            }}
+          </h3>
+          <div class="textIcon">
+            <h4>日本天皇兼职保安</h4>
+            <a
+              href="https://space.bilibili.com/13833854?spm_id_from=333.1007.0.0"
+              target="_blank"
+              ><span class="icon-[ri--arrow-right-line]"></span>
+            </a>
+          </div>
+        </div>
       </div>
 
-      <van-cell-group>
-        <van-cell
-          class="mt-1 text-sm"
-          :key="idx"
-          v-for="(attr, idx) in Object.keys(store.loginUser)"
-          :title="attr"
-          :value="store.loginUser[attr]"
-        />
-      </van-cell-group>
-      <div class="w-full flex justify-center">
+      <div class="flex justify-center">
         <van-button
           class="mt-2"
-          style="width: 95%"
+          style="width: 340px"
           type="danger"
           @click="handleLogout"
           >logout</van-button
@@ -73,12 +83,15 @@ const turnToRegister = () => {
 </script>
 
 <style scoped>
-.person-intro {
-  height: auto;
-  width: 100%;
-  padding: 30px;
+@import url("./styles/card.css");
+
+.person-card {
+  background: radial-gradient(#777, #222);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>
